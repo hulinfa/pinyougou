@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class BrandController {
@@ -66,6 +67,11 @@ public class BrandController {
             e.printStackTrace();
         }
         return false;
+    }
+
+    @GetMapping("/brand/findBrandList")
+    public List<Map<String, Object>> findBrandList() {
+        return brandService.findAllByIdAndName();
     }
 
 }
