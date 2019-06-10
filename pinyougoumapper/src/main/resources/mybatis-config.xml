@@ -9,6 +9,10 @@
         <setting name="mapUnderscoreToCamelCase" value="true"/>
     </settings>
 
+    <typeAliases>
+        <package name="com.pinyougou.pojo"/>
+    </typeAliases>
+
     <!-- 配置插件 -->
     <plugins>
         <!-- 配置分页拦截器(拦截SqL语句，在你的sql语句后面加上limit) -->
