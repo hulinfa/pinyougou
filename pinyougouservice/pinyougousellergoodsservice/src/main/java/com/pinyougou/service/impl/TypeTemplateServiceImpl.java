@@ -17,6 +17,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Map;
 
 /**
  * TypeTemplateServiceImpl 服务接口实现类
@@ -119,6 +120,15 @@ public class TypeTemplateServiceImpl implements TypeTemplateService {
             return new PageResult(pageInfo.getPages(), pageInfo.getList());
         } catch (Exception ex) {
             throw new RuntimeException(ex);
+        }
+    }
+
+    @Override
+    public List<Map<String, Object>> findTypeTemplateList() {
+        try {
+            return typeTemplateMapper.findTypeTemplateList();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
