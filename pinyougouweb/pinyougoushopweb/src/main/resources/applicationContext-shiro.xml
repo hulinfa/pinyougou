@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--整合shiro-->
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <property name="securityManager" ref="securityManager"/>
+        <property name="loginUrl" value="/shoplogin.html"/>
+        <!--
+        anon 匿名访问，不需要登录
+        user 过滤器只要用户登录isRemembered() == true or isAuthenticated() = true 即可访问成功
+        authc 过滤器只要用户登录isAuthenticated() = true 即可访问
+        logout 安全退出
+        -->
+        <property name="filterChainDefinitions">
+            <value>
+                /login = anon
+                /css/** = anon
+                /js/** = anon
+                /img/** = anon
+                *.html = anon
+                /seller/save = anon
+                /plugins/** = anon
+                /logout = logout
+                /** = user
+            </value>
+        </property>
+    </bean>
+
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <!--配置认证域(ini配置文件)-->
+        <property name="realm" ref="authorizingRealm"/>
+    </bean>
+
+    <!--配置自定义认证域-->
+    <bean id="authorizingRealm" class="com.pinyougou.shop.realm.SellerAuthorizingRealm">
+        <!--设置密码匹配器-->
+        <property name="credentialsMatcher" ref="credentialsMatcher"></property>
+    </bean>
+
+    <bean id="credentialsMatcher" class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
+        <property name="hashAlgorithmName" value="md5"/>
+        <property name="hashIterations" value="5"/>
+        <property name="storedCredentialsHexEncoded" value="true"/>
+    </bean>
+</beans>

@@ -15,4 +15,11 @@
         <!-- 覆盖父工程中的port属性 -->
         <port>9101</port>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-spring</artifactId>
+        </dependency>
+    </dependencies>
 </project>
