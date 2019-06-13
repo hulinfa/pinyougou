@@ -51,4 +51,6 @@ public interface TypeTemplateService {
     PageResult findByPage(TypeTemplate typeTemplate, int page, int rows);
 
     List<Map<String, Object>> findTypeTemplateList();
+
+    List<Map> findSpecByTemplateId(Long id);
 }

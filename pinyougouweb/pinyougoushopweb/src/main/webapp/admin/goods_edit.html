@@ -45,7 +45,6 @@
                 <!--tab内容-->
                 <div class="tab-content">
                     <!--表单内容-->
-                    {{goods}}
                     <div class="tab-pane active" id="home">
                         <div class="row data-type">
                             <div class="col-md-2 title">商品分类</div>
@@ -121,7 +120,7 @@
 
                             <div class="col-md-2 title rowHeight2x">包装列表</div>
                             <div class="col-md-10 data rowHeight2x">
-		
+
 										<textarea rows="4" class="form-control" v-model="goods.goodsDesc.packageList"
                                                   placeholder="包装列表">
 										</textarea>
@@ -176,6 +175,7 @@
                         </div>
                     </div>
 
+                    {{goods.items}}
                     <!--扩展属性-->
                     <div class="tab-pane" id="customAttribute">
                         <div class="row data-type">
@@ -193,52 +193,34 @@
                         <div class="row data-type">
                             <div class="col-md-2 title">是否启用规格</div>
                             <div class="col-md-10 data">
-                                <input type="checkbox">
+                                <input type="checkbox" v-model="goods.isEnableSpec" :true-value="1" :false-value="0">
                             </div>
                         </div>
                         <p>
-                        <div>
+                        <div v-show="goods.isEnableSpec">
 
                             <div class="row data-type">
 
-                                <div>
-                                    <div class="col-md-2 title">屏幕尺寸</div>
+                                <div v-for="s in specList">
+                                    <div class="col-md-2 title">{{s.text}}</div>
                                     <div class="col-md-10 data">
-		
-												<span> 
-													<input type="checkbox">4.0
-												</span>
-                                        <span>
-													<input type="checkbox">4.5
-												</span>
-                                        <span>
-													<input type="checkbox">5.0
-												</span>
-
+                                        <span v-for="o in s.options">
+                                            <input type="checkbox"
+                                                   @click="selectSpecAttr($event,s.text,o.optionName);createItems();">{{o.optionName}}
+                                        </span>
                                     </div>
                                 </div>
-                                <div>
-                                    <div class="col-md-2 title">网络制式</div>
-                                    <div class="col-md-10 data">
-		
-												<span> <input type="checkbox">2G
-												</span> <span> <input type="checkbox">3G
-												</span> <span> <input type="checkbox">4G
-												</span>
-
-                                    </div>
-                                </div>
-
                             </div>
-
 
                             <div class="row data-type">
                                 <table
                                         class="table table-bordered table-striped table-hover dataTable">
                                     <thead>
                                     <tr>
-                                        <th class="sorting">屏幕尺寸</th>
-                                        <th class="sorting">网络制式</th>
+                                        <th class="sorting" v-for="s in goods.goodsDesc.specificationItems">
+                                            {{s.attributeName}}
+                                        </th>
+                                        <!--<th class="sorting">网络制式</th>-->
                                         <th class="sorting">价格</th>
                                         <th class="sorting">库存</th>
                                         <th class="sorting">是否启用</th>
@@ -246,45 +228,18 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr>
-                                        <td>4.0</td>
-                                        <td>3G</td>
-                                        <td><input class="form-control" placeholder="价格">
+                                    <tr v-for="item in goods.items">
+                                        <td v-for="s in goods.goodsDesc.specificationItems">
+                                            {{item.spec[s.attributeName]}}
                                         </td>
-                                        <td><input class="form-control" placeholder="库存数量">
+                                        <td><input class="form-control" placeholder="价格" v-model="item.price">
                                         </td>
-                                        <td><input type="checkbox"></td>
-                                        <td><input type="checkbox"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>4.0</td>
-                                        <td>4G</td>
-                                        <td><input class="form-control" placeholder="价格">
+                                        <td><input class="form-control" placeholder="库存数量" v-model="item.num">
                                         </td>
-                                        <td><input class="form-control" placeholder="库存数量">
-                                        </td>
-                                        <td><input type="checkbox"></td>
-                                        <td><input type="checkbox"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>5.0</td>
-                                        <td>3G</td>
-                                        <td><input class="form-control" placeholder="价格">
-                                        </td>
-                                        <td><input class="form-control" placeholder="库存数量">
-                                        </td>
-                                        <td><input type="checkbox"></td>
-                                        <td><input type="checkbox"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>5.0</td>
-                                        <td>4G</td>
-                                        <td><input class="form-control" placeholder="价格">
-                                        </td>
-                                        <td><input class="form-control" placeholder="库存数量">
-                                        </td>
-                                        <td><input type="checkbox"></td>
-                                        <td><input type="checkbox"></td>
+                                        <td><input type="checkbox" v-model="item.status" :true-value="1"
+                                                   :false-value="0"></td>
+                                        <td><input type="checkbox" v-model="item.isDefault" :true-value="1"
+                                                   :false-value="0"></td>
                                     </tr>
 
                                     </tbody>

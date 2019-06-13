@@ -5,18 +5,21 @@ $(function () {
             el: '#app', // 元素绑定
             data: { // 数据模型
                 goods: {
-                    goodsDesc: {itemImages: [], customAttributeItems: []},
+                    goodsDesc: {itemImages: [], customAttributeItems: [], specificationItems: []},
                     category1Id: '',
                     category2Id: '',
                     category3Id: '',
                     typeTemplateId: '',
-                    brandId: ''
+                    brandId: '',
+                    items: [],       //数据封装对象(表单)
+                    isEnableSpec: 0
                 }, // 数据封装对象(表单)
                 picEntity: {url: '', color: ''},  //上传图片
                 itemCatList1: [],//一级商品分类
                 itemCatList2: [],//二级商品分类
                 itemCatList3: [],//三级商品分类
-                brandList: []
+                brandList: [],    //品牌数组
+                specList: []   //规格数组
             },
             methods: { // 定义操作方法
                 saveOrUpdate: function () { // 添加或修改
@@ -72,6 +75,56 @@ $(function () {
                     axios.get("/itemCat/findItemCatByParentId?parentId=" + parentId).then(function (response) {
                         vue[name] = response.data;
                     });
+                },
+                selectSpecAttr: function (e, specName, optionName) {
+                    var obj = this.searchJsonByKey(this.goods.goodsDesc.specificationItems, 'attributeName', specName);
+                    if (obj) {
+                        if (e.target.checked) {
+                            obj.attributeValue.push(optionName);
+                        } else {
+                            obj.attributeValue.splice(obj.attributeValue.indexOf(optionName), 1);
+                            if (obj.attributeValue.length == 0) {
+                                var specificationItems = this.goods.goodsDesc.specificationItems;
+                                specificationItems.splice(specificationItems.indexOf(obj), 1);
+                            }
+                        }
+                    } else {
+                        this.goods.goodsDesc.specificationItems.push(
+                            {"attributeName": specName, "attributeValue": [optionName]})
+                    }
+                },
+                searchJsonByKey: function (jsonArr, key, value) {
+                    for (var i = 0; i < jsonArr.length; i++) {
+                        if (jsonArr[i][key] == value) {
+                            return jsonArr[i];
+                        }
+                    }
+                },
+                createItems: function () {
+                    this.goods.items = [{
+                        spec: {}, price: 0, num: 9999,
+                        status: '0', isDefault: '0'
+                    }];
+
+                    var specItems = this.goods.goodsDesc.specificationItems;
+
+                    for (var i = 0; i < specItems.length; i++) {
+                        this.goods.items = this.swapItems(this.goods.items,
+                            specItems[i].attributeName, specItems[i].attributeValue);
+                    }
+                },
+                swapItems: function (items, attributeName, attributeValue) {
+                    //创建新的sku数组
+                    var newItems = new Array();
+                    for (var i = 0; i < items.length; i++) {
+                        var item = items[i];
+                        for (var j = 0; j < attributeValue.length; j++) {
+                            var newItem = JSON.parse(JSON.stringify(item));
+                            newItem.spec[attributeName] = attributeValue[j];
+                            newItems.push(newItem);
+                        }
+                    }
+                    return newItems;
                 }
             },
             created: function () { // 创建生命周期(初始化方法)
@@ -112,9 +165,14 @@ $(function () {
                             vue.brandList = JSON.parse(response.data.brandIds);
                             vue.goods.goodsDesc.customAttributeItems = JSON.parse(response.data.customAttributeItems);
                         });
-                    }else{
+                        axios.get("/typeTemplate/findSpecByTemplateId?id=" + newVal)
+                            .then(function (response) {
+                                vue.specList = response.data;
+                            });
+                    } else {
                         vue.brandList = [];
                         vue.goods.goodsDesc.customAttributeItems = [];
+                        vue.specList = [];
                     }
                 }
             }
