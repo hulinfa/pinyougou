@@ -82,7 +82,7 @@ window.onload = function () {
                     if (response.data) {
                         vue.search(vue.page);
                     } else {
-                        alert("操作失败！")
+                        alert("操作失败");
                     }
                 });
             }

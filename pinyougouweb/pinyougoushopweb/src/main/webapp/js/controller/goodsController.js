@@ -10,7 +10,7 @@ window.onload = function () {
             pages: 0, // 总页数
             searchEntity: {}, // 搜索条件数据封装
             ids: [], // 复选框选中的id数组
-            status: ["未审核", "已审核", "审核未通过", "关闭"],//商品状态数组
+            status: ["未审核", "审核中", "审核已通过", "关闭"],//商品状态数组
             checked: false // 全选复选框是否选中
         },
         methods: { // 定义操作方法
@@ -76,6 +76,26 @@ window.onload = function () {
                     });
                 } else {
                     alert("请选择要删除的记录！");
+                }
+            },
+            updateMarketable: function (status) {
+                if (this.ids.length > 0) {
+                    axios.get("/goods/updateMarketable?ids="
+                        + this.ids, {
+                        params: {status: status}
+                    }).then(function (response) {
+                        if (response.data) {
+                            // 计算当前页码(如果删除为最后一页查询上一页)
+                            var page = vue.page == vue.pages && vue.checked
+                                ? vue.page - 1 : vue.page;
+                            // 重新加载数据
+                            vue.search(page);
+                        } else {
+                            alert("操作失败！");
+                        }
+                    });
+                } else {
+                    alert("请选择要上下架的商品！");
                 }
             }
         },

@@ -33,4 +33,5 @@ public interface GoodsService {
 	/** 多条件分页查询 */
 	PageResult findByPage(Goods goods, int page, int rows);
 
+    void updateStatus(String columnName, Long[] ids, String status);
 }

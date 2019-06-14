@@ -10,12 +10,13 @@ window.onload = function () {
             pages: 0, // 总页数
             searchEntity: {}, // 搜索条件数据封装
             ids: [], // 复选框选中的id数组
+            contentCategoryList: [],
             checked: false // 全选复选框是否选中
         },
         methods: { // 定义操作方法
             search: function (page) { // 搜索方法
                 // 发送异步请求
-                axios.get("/goods/findByPage?page=" + page,
+                axios.get("/content/findByPage?page=" + page,
                     {params: this.searchEntity})
                     .then(function (response) {
                         // 获取响应数据
@@ -28,14 +29,14 @@ window.onload = function () {
                         vue.ids = [];
                     });
             },
-            updateStatus: function (status) { // 添加或修改
-                if (this.ids.length > 0) {
-                    // 发送异步请求
-                    axios.get("/goods/updateStatus?ids=" + this.ids, {
-                        params: {
-                            status: status
-                        }
-                    }).then(function (response) {
+            saveOrUpdate: function () { // 添加或修改
+                var url = "save"; // 添加
+                if (this.entity.id) {
+                    url = "update"; // 修改
+                }
+                // 发送异步请求
+                axios.post("/content/" + url, this.entity)
+                    .then(function (response) {
                         // 获取响应数据
                         if (response.data) { // 操作成功
                             // 重新加载数据
@@ -44,9 +45,6 @@ window.onload = function () {
                             alert('操作失败！');
                         }
                     });
-                } else {
-                    alert("请选择要审核的商品!");
-                }
             },
             show: function (entity) { // 数据回显
                 // 把entity对象转化成json字符串
@@ -64,7 +62,7 @@ window.onload = function () {
             },
             del: function () { // 删除
                 if (this.ids.length > 0) {
-                    axios.get("/goods/delete?ids="
+                    axios.get("/content/delete?ids="
                         + this.ids).then(function (response) {
                         if (response.data) {
                             // 计算当前页码(如果删除为最后一页查询上一页)
@@ -79,15 +77,42 @@ window.onload = function () {
                 } else {
                     alert("请选择要删除的记录！");
                 }
+            },
+            findContentCategoryList: function () {
+                axios.get("/contentCategory/findAll").then(function (response) {
+                    vue.contentCategoryList = response.data;
+                });
+            },
+            uploadFile: function () {
+                /** 创建表单对象 */
+                var formData = new FormData();
+                /** 追加需要上传的文件 */
+                formData.append("file", file.files[0]);
+                /** 发送异步请求上传文件 */
+                axios({
+                    method : 'post', // 请求方式
+                    url : "/upload", // 请求URL
+                    data : formData, // 表单数据
+                    headers : {'Content-Type' : "multipart/form-data"} // 请求头
+                }).then(function(response){
+                    /** 如果上传成功，取出url */
+                    if(response.data.status == 200){
+                        /** 设置图片访问地址 */
+                        vue.entity.pic = response.data.url;
+                    }else{
+                        alert("上传失败！");
+                    }
+                });
             }
         },
         created: function () { // 创建生命周期(初始化方法)
             // 调用搜索方法
             this.search(this.page);
+            this.findContentCategoryList();
         },
         updated: function () { // 更新数据生命周期
             // 检查全选checkbox是否选中
-            this.checked = (this.ids.length == this.dataList.length && this.ids.length != 0);
+            this.checked = (this.ids.length == this.dataList.length);
         }
     });
 };

@@ -15,7 +15,7 @@ window.onload = function () {
         methods: { // 定义操作方法
             search: function (page) { // 搜索方法
                 // 发送异步请求
-                axios.get("/goods/findByPage?page=" + page,
+                axios.get("/contentCategory/findByPage?page=" + page,
                     {params: this.searchEntity})
                     .then(function (response) {
                         // 获取响应数据
@@ -28,14 +28,14 @@ window.onload = function () {
                         vue.ids = [];
                     });
             },
-            updateStatus: function (status) { // 添加或修改
-                if (this.ids.length > 0) {
-                    // 发送异步请求
-                    axios.get("/goods/updateStatus?ids=" + this.ids, {
-                        params: {
-                            status: status
-                        }
-                    }).then(function (response) {
+            saveOrUpdate: function () { // 添加或修改
+                var url = "save"; // 添加
+                if (this.entity.id) {
+                    url = "update"; // 修改
+                }
+                // 发送异步请求
+                axios.post("/contentCategory/" + url, this.entity)
+                    .then(function (response) {
                         // 获取响应数据
                         if (response.data) { // 操作成功
                             // 重新加载数据
@@ -44,9 +44,6 @@ window.onload = function () {
                             alert('操作失败！');
                         }
                     });
-                } else {
-                    alert("请选择要审核的商品!");
-                }
             },
             show: function (entity) { // 数据回显
                 // 把entity对象转化成json字符串
@@ -64,7 +61,7 @@ window.onload = function () {
             },
             del: function () { // 删除
                 if (this.ids.length > 0) {
-                    axios.get("/goods/delete?ids="
+                    axios.get("/contentCategory/delete?ids="
                         + this.ids).then(function (response) {
                         if (response.data) {
                             // 计算当前页码(如果删除为最后一页查询上一页)
@@ -84,10 +81,11 @@ window.onload = function () {
         created: function () { // 创建生命周期(初始化方法)
             // 调用搜索方法
             this.search(this.page);
+            this.findContentCategoryList();
         },
         updated: function () { // 更新数据生命周期
             // 检查全选checkbox是否选中
-            this.checked = (this.ids.length == this.dataList.length && this.ids.length != 0);
+            this.checked = (this.ids.length == this.dataList.length);
         }
     });
 };

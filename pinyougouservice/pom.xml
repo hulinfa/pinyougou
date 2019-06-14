@@ -13,6 +13,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>pinyougousellergoodsservice</module>
+        <module>pinyougou-content-service</module>
     </modules>
     <properties>
         <!-- tomcat端口号 -->

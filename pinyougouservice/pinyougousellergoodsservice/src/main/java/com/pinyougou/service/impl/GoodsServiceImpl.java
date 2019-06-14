@@ -228,4 +228,12 @@ public class GoodsServiceImpl implements GoodsService {
         }
     }
 
+    @Override
+    public void updateStatus(String columnName, Long[] ids, String status) {
+        try {
+            goodsMapper.updateStatus(columnName,ids,status);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

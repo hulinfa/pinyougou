@@ -30,7 +30,6 @@ public class GoodsController {
 
     @GetMapping("/findByPage")
     public PageResult findByPage(Goods goods, Integer page, @RequestParam(defaultValue = "10") Integer rows) {
-
         /** 获取登录商家编号 */
         String sellerId = (String) SecurityUtils.getSubject().getPrincipal();
         /** 添加查询条件 */
@@ -44,10 +43,19 @@ public class GoodsController {
                 e.printStackTrace();
             }
         }
-
         /** 调用服务层方法查询 */
         return goodsService.findByPage(goods, page, rows);
     }
 
+    @GetMapping("/updateMarketable")
+    public boolean updateMarketable(Long[] ids, String status) {
+        try {
+            goodsService.updateStatus("is_marketable", ids, status);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
 }
