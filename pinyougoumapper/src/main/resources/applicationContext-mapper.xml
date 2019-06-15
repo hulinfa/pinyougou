@@ -10,10 +10,6 @@
        http://www.springframework.org/schema/context
        http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <!-- 配置加载属性文件 -->
-    <context:property-placeholder
-            location="classpath*:props/*.properties"/>
-
     <!-- 配置数据源 -->
     <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
           destroy-method="close">
