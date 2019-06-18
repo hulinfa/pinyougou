@@ -15,6 +15,7 @@
         <module>pinyougoupojo</module>
         <module>pinyougouweb</module>
         <module>pinyougoucommon</module>
+        <module>pinyougouesimport</module>
     </modules>
 
     <!-- 定义全局的属性(定义依赖jar包的版本号) -->
