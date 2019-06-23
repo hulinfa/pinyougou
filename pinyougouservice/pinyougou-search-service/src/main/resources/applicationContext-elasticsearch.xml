@@ -21,6 +21,6 @@
     </bean>
 
     <!--配置数据访问接口-->
-    <elasticsearch:repositories base-package="com.pinyougou.search.dao"/>
+    <elasticsearch:repositories base-package="com.pinyougou.search"/>
 
 </beans>

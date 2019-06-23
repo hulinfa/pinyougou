@@ -1,11 +1,15 @@
 package com.pinyougou.shop.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
+import com.alibaba.fastjson.JSON;
 import com.pinyougou.pojo.Goods;
 import com.pinyougou.pojo.PageResult;
 import com.pinyougou.service.GoodsService;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.rocketmq.client.producer.MQProducer;
+import org.apache.rocketmq.common.message.Message;
 import org.apache.shiro.SecurityUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,6 +18,9 @@ public class GoodsController {
 
     @Reference(timeout = 10000)
     private GoodsService goodsService;
+
+    @Autowired
+    private MQProducer mqProducer;
 
     @RequestMapping("/save")
     public Boolean save(@RequestBody Goods goods) {
@@ -51,6 +58,17 @@ public class GoodsController {
     public boolean updateMarketable(Long[] ids, String status) {
         try {
             goodsService.updateStatus("is_marketable", ids, status);
+            if ("1".equals(status)) {
+                //1表示商品上架
+                mqProducer.send(new Message("ES_ITEM_TOPIC", "UPDATE", JSON.toJSONString(ids).getBytes("utf-8")));
+                //通知生成商品的静态网页
+                mqProducer.send(new Message("PAGE_ITEM_TOPIC", "CREATE", JSON.toJSONString(ids).getBytes("utf-8")));
+            } else {
+                //表示商品下架
+                mqProducer.send(new Message("ES_ITEM_TOPIC", "DELETE", JSON.toJSONString(ids).getBytes("utf-8")));
+                //发送消息，删除静态网页
+                mqProducer.send(new Message("PAGE_ITEM_TOPIC", "DELETE", JSON.toJSONString(ids).getBytes("UTF-8")));
+            }
             return true;
         } catch (Exception e) {
             e.printStackTrace();

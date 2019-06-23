@@ -1,4 +1,4 @@
-package com.pinyougou.search.pojo;
+package com.pinyougou.pojo;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;

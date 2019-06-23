@@ -14,7 +14,7 @@
        http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
     <!-- 开启组件扫描 -->
     <context:component-scan
-            base-package="com.pinyougou.search.controller"/>
+            base-package="com.pinyougou.search"/>
 
     <!-- 开启MVC注解驱动 -->
     <mvc:annotation-driven>
@@ -38,6 +38,33 @@
     <!-- 配置zookeeper作为注册中心，注册服务地址 -->
     <dubbo:registry protocol="zookeeper" address="192.168.12.131:2181"/>
     <!-- 配置采用包扫描来引用服务，产生服务接口的代理对象 -->
-    <dubbo:annotation package="com.pinyougou.search.controller"/>
+    <dubbo:annotation package="com.pinyougou.search"/>
+
+    <!--############# 配置消息消费者 #############-->
+    <!-- 配置默认的MQ消息消费者 -->
+    <bean id="mqPushConsumer"
+          class="org.apache.rocketmq.client.consumer.DefaultMQPushConsumer"
+          init-method="start"
+          destroy-method="shutdown">
+        <!-- 设置消息模式: (广播BROADCASTING | 集群CLUSTERING) -->
+        <property name="messageModel" value="CLUSTERING"/>
+        <!-- 设置消费者组名 -->
+        <property name="consumerGroup" value="ES_ITEM_CONSUMER"/>
+        <!-- 设置NameServer地址 -->
+        <property name="namesrvAddr" value="${namesrvAddr}"/>
+        <!-- 设置消息监听器 -->
+        <property name="messageListener" ref="messageListener"/>
+        <!-- 设置订阅信息 -->
+        <property name="subscription">
+            <map>
+                <!-- 指定主题和标签 -->
+                <entry key="ES_ITEM_TOPIC" value="*"/>
+            </map>
+        </property>
+    </bean>
+
+    <!-- 配置消息监听器 -->
+    <bean id="messageListener"
+          class="com.pinyougou.search.listener.ItemMessageListener"/>
 
 </beans>

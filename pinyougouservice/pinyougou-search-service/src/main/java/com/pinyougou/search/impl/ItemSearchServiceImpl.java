@@ -2,8 +2,8 @@ package com.pinyougou.search.impl;
 
 import com.alibaba.dubbo.config.annotation.Service;
 import com.alibaba.fastjson.JSON;
+import com.pinyougou.pojo.EsItem;
 import com.pinyougou.search.dao.EsItemDao;
-import com.pinyougou.search.pojo.EsItem;
 import com.pinyougou.service.ItemSearchService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.search.join.ScoreMode;
@@ -22,6 +22,7 @@ import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.SearchResultMapper;
 import org.springframework.data.elasticsearch.core.aggregation.AggregatedPage;
 import org.springframework.data.elasticsearch.core.aggregation.impl.AggregatedPageImpl;
+import org.springframework.data.elasticsearch.core.query.DeleteQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.transaction.annotation.Transactional;
@@ -149,5 +150,23 @@ public class ItemSearchServiceImpl implements ItemSearchService {
         data.put("rows", esItems.getContent());
         data.put("totalPages", esItems.getTotalPages());
         return data;
+    }
+
+    @Override
+    public void saveOrUpdate(List<EsItem> esItemList) {
+        try {
+            esItemDao.saveAll(esItemList);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void delete(List<Long> ids) {
+        DeleteQuery deleteQuery = new DeleteQuery();
+        deleteQuery.setIndex("pinyougou");
+        deleteQuery.setType("item");
+        deleteQuery.setQuery(QueryBuilders.termsQuery("goodsId", ids));
+        esTemplate.delete(deleteQuery);
     }
 }

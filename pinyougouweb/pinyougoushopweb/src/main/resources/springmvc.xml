@@ -17,7 +17,7 @@
             base-package="com.pinyougou.shop"/>
     <!--加载项目的属性文件-->
 
-    <context:property-placeholder location="classpath:application.properties"/>
+    <context:property-placeholder location="classpath*:*.properties"/>
 
     <!--配置文件上传解析器-->
     <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
@@ -38,6 +38,18 @@
             </bean>
         </mvc:message-converters>
     </mvc:annotation-driven>
+
+    <!--############# 配置消息生产者 #############-->
+    <!-- 配置默认的MQ消息生产者 -->
+    <bean id="mqProducer"
+          class="org.apache.rocketmq.client.producer.DefaultMQProducer"
+          init-method="start"
+          destroy-method="shutdown">
+        <!-- 设置组名 -->
+        <property name="producerGroup" value="ITEM_PRODUCER"/>
+        <!-- 设置NameServer连接地址-->
+        <property name="namesrvAddr" value="${namesrvAddr}"/>
+    </bean>
 
     <!-- 配置静态资源用WEB容器默认的servlet来处理 -->
     <mvc:default-servlet-handler/>
