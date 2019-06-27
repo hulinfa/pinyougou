@@ -1,7 +1,5 @@
 package com.pinyougou.search.listener;
 
-import java.util.Date;
-
 import com.google.common.collect.Maps;
 
 import com.alibaba.dubbo.config.annotation.Reference;

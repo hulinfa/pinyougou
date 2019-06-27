@@ -17,6 +17,8 @@
         <module>pinyougouportalweb</module>
         <module>pinyougou-search-web</module>
         <module>pinyougou-item-web</module>
+        <module>pinyougou-sms-web</module>
+        <module>pinyougou-user-web</module>
     </modules>
     <properties>
         <!-- tomcat端口号 -->

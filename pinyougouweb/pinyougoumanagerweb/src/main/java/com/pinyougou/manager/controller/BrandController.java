@@ -7,7 +7,6 @@ import com.pinyougou.service.BrandService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 

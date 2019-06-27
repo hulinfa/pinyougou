@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- 配置shiro过滤器工厂 -->
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <!-- 配置注入安全管理对象 -->
+        <property name="securityManager" ref="securityManager"/>
+        <!-- 配置过滤器 -->
+        <property name="filters">
+            <map>
+                <!-- 1. 安全过滤器，拦截需要登录的URL -->
+                <entry key="security">
+                    <bean class="io.buji.pac4j.filter.SecurityFilter">
+                        <property name="config" ref="config"/>
+                    </bean>
+                </entry>
+                <!-- 2. 回调过滤器，完成ticket验证 -->
+                <entry key="callback">
+                    <bean class="io.buji.pac4j.filter.CallbackFilter">
+                        <property name="config" ref="config"/>
+                        <!-- 验证通过后默认重定向URL -->
+                        <property name="defaultUrl" value="http://user.pinyougou.com"/>
+                    </bean>
+                </entry>
+                <!-- 3. 退出过滤器，拦截需要退出的URL -->
+                <entry key="logout">
+                    <bean class="io.buji.pac4j.filter.LogoutFilter">
+                        <property name="config" ref="config"/>
+                        <!-- 中央退出 -->
+                        <property name="centralLogout" value="true"/>
+                        <!-- 本地退出 -->
+                        <property name="localLogout" value="true"/>
+                        <!-- 退出成功后默认重定向URL -->
+                        <property name="defaultUrl" value="http://www.pinyougou.com"/>
+                    </bean>
+                </entry>
+            </map>
+        </property>
+        <!--  配置URL过滤器链(配置顺序为自上而下) -->
+        <property name="filterChainDefinitions">
+            <value>
+                /css/** = anon
+                /img/** = anon
+                /js/** = anon
+                /plugins/** = anon
+                /register.html = anon
+                /user/save = anon
+                /user/sendCode = anon
+
+                /callback = callback
+                /logout = logout
+                /** = security
+            </value>
+        </property>
+    </bean>
+    <!-- pac4j配置 -->
+    <bean id="config" class="org.pac4j.core.config.Config">
+        <constructor-arg name="client" ref="casClient"/>
+    </bean>
+    <!-- 配置CAS客户端 -->
+    <bean id="casClient" class="org.pac4j.cas.client.CasClient">
+        <!-- 设置cas服务端信息 -->
+        <property name="configuration" ref="casConfiguration"/>
+        <!-- 登录成功后重定向回来的请求URL -->
+        <property name="callbackUrl" value="http://user.pinyougou.com/callback"/>
+        <!-- 设置客户端名称(client_name=CasClient)默认 -->
+        <property name="name" value="CasClient"/>
+    </bean>
+    <!-- 配置cas服务端信息 -->
+    <bean id="casConfiguration" class="org.pac4j.cas.config.CasConfiguration">
+        <!-- CAS服务端登录请求URL -->
+        <property name="loginUrl" value="http://sso.pinyougou.com/login/"/>
+        <!-- CAS服务端请求URL前缀-->
+        <property name="prefixUrl" value="http://sso.pinyougou.com/"/>
+    </bean>
+
+    <!-- 配置安全管理器 -->
+    <bean id="securityManager"
+          class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <!-- 配置自定义身份认证域-->
+        <property name="realm" ref="pac4jRealm"/>
+    </bean>
+    <!-- 自定义身份认证域 -->
+    <bean id="pac4jRealm" class="com.pinyougou.user.realm.CasPac4jRealm"/>
+
+</beans>
