@@ -6,8 +6,11 @@
                 <div class="py-container">
                     <div class="shortcut">
                         <ul class="fl">
-                            <li class="f-item">品优购欢迎您！</li>
-                            <li class="f-item">请<a href="login.html">登录</a><span>
+                            <li class="f-item" v-if="loginName">{{loginName}},品优购欢迎您！
+                                <a :href="'http://sso.pinyougou.com/logout?service='+redirectUrl">退出</a>
+                            </li>
+                            <li class="f-item" v-if="!loginName">请
+                                <a :href="'http://sso.pinyougou.com/?service='+redirectUrl">登录</a><span>
 							<a href="http://user.pinyougou.com/register.html">免费注册</a></span></li>
                         </ul>
                         <ul class="fr">

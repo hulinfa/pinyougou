@@ -18,7 +18,9 @@ window.onload = function () {
             keywords: '',    //搜索关键字
             jumpPage: 1,     //跳转页码
             firstDot: true,   //前面加点
-            lastDot: true      //后面加点
+            lastDot: true,      //后面加点
+            redirectUrl:'',   //重定向url
+            loginName:''      //登录用户名
         },
         methods: { // 操作方法
             search: function () {
@@ -90,10 +92,20 @@ window.onload = function () {
                 var keywords = this.getUrlParam("keywords");
                 this.searchParam.keywords = keywords ? keywords : '';
                 this.search();
+            },
+            // 获取登录用户名
+            loadUsername : function () {
+                // 定义重定向URL
+                this.redirectUrl = window.encodeURIComponent(location.href);
+                // 获取登录用户名
+                axios.get("/user/showName").then(function(response){
+                    vue.loginName = response.data.loginName;
+                });
             }
         },
         created: function () { // 创建生命周期
             this.initSearch();
+            this.loadUsername();
         }
     });
 };

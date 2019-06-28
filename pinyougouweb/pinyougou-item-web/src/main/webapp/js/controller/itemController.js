@@ -5,7 +5,9 @@ window.onload = function () {
         data: { // 数据模型
             num: 1, //购买数量
             spec: {}, //规格选项
-            sku: {}    //sku商品
+            sku: {},    //sku商品
+            redirectUrl:'',//重定向url
+            loginName:''//登陆用户名
         },
         methods: { // 操作方法
             addNum: function (x) {
@@ -34,11 +36,21 @@ window.onload = function () {
             },
             addToCart: function () {
                 alert('sku商品id:' + this.sku.id + ", 购买数量：" + this.num);
+            },
+            // 加载用户
+            loadUsername : function () {
+                // 定义重定向URL
+                this.redirectUrl = window.encodeURIComponent(location.href);
+                // 获取登录用户名
+                axios.get("/user/showName").then(function(response){
+                    vue.loginName = response.data.loginName;
+                });
             }
 
         },
         created: function () { // 创建生命周期
             this.loadSku();
+            this.loadUsername();
         }
     });
 };
