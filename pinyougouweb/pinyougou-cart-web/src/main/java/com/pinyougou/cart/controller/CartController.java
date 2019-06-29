@@ -6,6 +6,7 @@ import com.pinyougou.pojo.Cart;
 import com.pinyougou.service.CartService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,7 +29,12 @@ public class CartController {
     private HttpServletResponse response;
 
     @GetMapping("/addCart")
+    @CrossOrigin(origins = "http://item.pinyougou.com", allowCredentials = "true")
     public boolean addCart(Long itemId, Integer num) {
+//        /** 设置允许访问的域名 */
+//        response.setHeader("Access-Control-Allow-Origin", "http://item.pinyougou.com");
+//        /** 设置允许操作Cookie */
+//        response.setHeader("Access-Control-Allow-Credentials", "true");
         try {
             //获取登录用户名
             String username = request.getRemoteUser();

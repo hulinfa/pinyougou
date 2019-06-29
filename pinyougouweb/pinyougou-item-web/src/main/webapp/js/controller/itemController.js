@@ -6,8 +6,8 @@ window.onload = function () {
             num: 1, //购买数量
             spec: {}, //规格选项
             sku: {},    //sku商品
-            redirectUrl:'',//重定向url
-            loginName:''//登陆用户名
+            redirectUrl: '',//重定向url
+            loginName: ''//登陆用户名
         },
         methods: { // 操作方法
             addNum: function (x) {
@@ -35,14 +35,22 @@ window.onload = function () {
                 }
             },
             addToCart: function () {
-                alert('sku商品id:' + this.sku.id + ", 购买数量：" + this.num);
+                // alert('sku商品id:' + this.sku.id + ", 购买数量：" + this.num);
+                axios.get("http://cart.pinyougou.com/cart/addCart?itemId=" + this.sku.id + "&num=" + this.num, {'withCredentials': true}).then(function (response) {
+                    if (response.data) {
+                        //跳转到购物车页面。
+                        location.href = 'http://cart.pinyougou.com/cart.html';
+                    } else {
+                        alert("请求失败！");
+                    }
+                });
             },
             // 加载用户
-            loadUsername : function () {
+            loadUsername: function () {
                 // 定义重定向URL
                 this.redirectUrl = window.encodeURIComponent(location.href);
                 // 获取登录用户名
-                axios.get("/user/showName").then(function(response){
+                axios.get("/user/showName").then(function (response) {
                     vue.loginName = response.data.loginName;
                 });
             }

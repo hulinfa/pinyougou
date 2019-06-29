@@ -106,8 +106,9 @@
                                 </li>
                                 <li class="yui3-u-1-8"><span class="sum">{{orderItem.totalFee.toFixed(2)}}</span></li>
                                 <li class="yui3-u-1-8">
-                                    <a href="#none" @click="addCart(orderItem.itemId,-OrderItem.num)">删除</a><br/>
-                                    <a href="#none">移到我的关注</a>
+                                    <a href="javascript:;"
+                                       @click="addCart(orderItem.itemId,-(orderItem.num))">删除</a><br/>
+                                    <a href="javascript:;">移到我的关注</a>
                                 </li>
                             </ul>
                         </div>
@@ -129,11 +130,12 @@
                 <div class="toolbar">
                     <div class="chosed">已选择<span>{{totalEntity.totalNum}}</span>件商品</div>
                     <div class="sumprice">
-                        <span><em>总价（不含运费） ：</em><i class="summoney">￥{{totalEntity.totalMoney.toFixed(2)}}元</i></span><br>
+                        <span><em>总价（不含运费） ：</em><i
+                                class="summoney">￥{{totalEntity.totalMoney.toFixed(2)}}</i></span><br>
                         <span><em>已节省：</em><i>-¥20.00</i></span>
                     </div>
                     <div class="sumbtn">
-                        <a class="sum-btn" href="getOrderInfo.html" target="_blank">结算</a>
+                        <a class="sum-btn" href="/order/getOrderInfo.html" target="_blank">结算</a>
                     </div>
                 </div>
             </div>

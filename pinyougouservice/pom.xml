@@ -18,6 +18,7 @@
         <module>pinyougou-sms-service</module>
         <module>pinyougou-user-service</module>
         <module>pinyougou-cart-service</module>
+        <module>pinyougou-order-service</module>
     </modules>
     <properties>
         <!-- tomcat端口号 -->
