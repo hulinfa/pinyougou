@@ -6,6 +6,33 @@
     <link rel="icon" href="/assets/img/favicon.ico"/>
     <link rel="stylesheet" type="text/css" href="/css/webbase.css"/>
     <link rel="stylesheet" type="text/css" href="/css/pages-payfail.css"/>
+    <script src="/js/vue.min.js"></script>
+    <script src="/js/axios.min.js"></script>
+    <script type="text/javascript">
+        window.onload = function () {
+            var vue = new Vue({
+                el: '#app', // 元素绑定
+                data: { // 数据模型
+                    loginName: '', // 登录用户名
+                    redirectUrl: '' // 重定向URL
+                },
+                methods: { // 操作方法
+                    // 加载用户
+                    loadUsername: function () {
+                        // 定义重定向URL
+                        this.redirectUrl = window.encodeURIComponent(location.href);
+                        // 获取登录用户名
+                        axios.get("/user/showName").then(function (response) {
+                            vue.loginName = response.data.loginName;
+                        });
+                    }
+                },
+                created: function () { // 创建生命周期
+                    this.loadUsername();
+                }
+            });
+        }
+    </script>
 </head>
 
 <body>
@@ -15,8 +42,9 @@
         <div class="py-container">
             <div class="shortcut">
                 <ul class="fl">
-                    <li class="f-item">品优购欢迎您！</li>
-                    <li class="f-item">请登录　<span><a href="#">免费注册</a></span></li>
+                    <li class="f-item" v-if="loginName">{{loginName}},品优购欢迎您！&nbsp;
+                        <a :href="'http://sso.pinyougou.com/logout?service=' + redirectUrl">退出</a>
+                    </li>
                 </ul>
                 <ul class="fr">
                     <li class="f-item">我的订单</li>

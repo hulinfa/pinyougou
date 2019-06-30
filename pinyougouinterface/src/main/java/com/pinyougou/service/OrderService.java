@@ -1,6 +1,8 @@
 package com.pinyougou.service;
 
 import com.pinyougou.pojo.Order;
+import com.pinyougou.pojo.PayLog;
+
 import java.util.List;
 import java.io.Serializable;
 /**
@@ -31,4 +33,7 @@ public interface OrderService {
 	/** 多条件分页查询 */
 	List<Order> findByPage(Order order, int page, int rows);
 
+    PayLog findPayLogFromRedis(String userId);
+
+	void updateOrderStatus(String outTradeNo, String transaction_id);
 }

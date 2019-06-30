@@ -6,7 +6,41 @@
     <link rel="icon" href="/assets/img/favicon.ico"/>
     <link rel="stylesheet" type="text/css" href="/css/webbase.css"/>
     <link rel="stylesheet" type="text/css" href="/css/pages-paysuccess.css"/>
+    <script src="/js/vue.min.js"></script>
+    <script src="/js/axios.min.js"></script>
+    <script src="/js/location.js"></script>
 </head>
+<script type="text/javascript">
+    window.onload = function () {
+        var vue = new Vue({
+            el: '#app', // 元素绑定
+            data: { // 数据模型
+                loginName: '', // 登录用户名
+                redirectUrl: '', // 重定向URL
+                money: 0 // 金额
+            },
+            methods: { // 操作方法
+                // 加载用户
+                loadUsername: function () {
+                    // 定义重定向URL
+                    this.redirectUrl = window.encodeURIComponent(location.href);
+                    // 获取登录用户名
+                    axios.get("/user/showName").then(function (response) {
+                        vue.loginName = response.data.loginName;
+                    });
+                },
+                // 获取金额
+                getMoney: function () {
+                    this.money = this.getUrlParam("money");
+                }
+            },
+            created: function () { // 创建生命周期
+                this.loadUsername();
+                this.getMoney();
+            }
+        });
+    }
+</script>
 <body>
 <div id="app">
     <!--head-->
@@ -14,8 +48,9 @@
         <div class="py-container">
             <div class="shortcut">
                 <ul class="fl">
-                    <li class="f-item">品优购欢迎您！</li>
-                    <li class="f-item">请登录　<span><a href="#">免费注册</a></span></li>
+                    <li class="f-item" v-if="loginName">{{loginName}},品优购欢迎您！
+                        <a :href="'http://sso.pinyougou.com/logout?service=' + redirectUrl">退出</a>
+                    </li>
                 </ul>
                 <ul class="fr">
                     <li class="f-item">我的订单</li>
@@ -46,7 +81,7 @@
                 <h3><img src="/img/_/right.png" width="48" height="48">　恭喜您，支付成功啦！</h3>
                 <div class="paydetail">
                     <p>支付方式：微信支付</p>
-                    <p>支付金额：￥1006.00元</p>
+                    <p>支付金额：￥{{money}}元</p>
                     <p class="button">
                         <a href="myOrder.html" class="sui-btn btn-xlarge btn-danger">查看订单</a>
                         &nbsp;&nbsp;&nbsp;&nbsp;<a href="http://www.pinyougou.com" class="sui-btn btn-xlarge ">继续购物</a>
