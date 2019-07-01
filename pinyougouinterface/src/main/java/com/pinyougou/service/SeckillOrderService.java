@@ -31,4 +31,14 @@ public interface SeckillOrderService {
 	/** 多条件分页查询 */
 	List<SeckillOrder> findByPage(SeckillOrder seckillOrder, int page, int rows);
 
+	/**
+	 * 提交订单到redis
+	 * @param id		商品的id
+	 * @param userId	用户的id
+	 */
+	void submitOrderToRedis(Long id,String userId);
+
+    SeckillOrder findOrderFromRedis(String userId);
+
+	void saveOrder(String userId, String transaction_id);
 }
